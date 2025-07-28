@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WIZSINT - Premium OSINT Discord Bot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00799e;
+            --secondary: #003a4e;
+            --accent: #00c3ff;
+            --text: #e2e2e2;
+            --text-secondary: #a5c7d5;
+            --card-bg: #004d6b;
+            --command-bg: rgba(0, 195, 255, 0.1);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: all 0.3s ease;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--secondary);
+            color: var(--text);
+            line-height: 1.6;
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(0, 195, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(0, 121, 158, 0.1) 0%, transparent 50%);
+            text-align: center;
+            scroll-behavior: smooth;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Snowflakes */
+        .snowflake {
+            position: fixed;
+            top: -10px;
+            z-index: 9999;
+            color: white;
+            user-select: none;
+            pointer-events: none;
+            animation: fall linear forwards;
+            opacity: 0.8;
+        }
+        
+        @keyframes fall {
+            to {
+                transform: translateY(100vh);
+            }
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        header {
+            background-color: rgba(0, 58, 78, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(0, 195, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+        
+        nav a:hover {
+            color: var(--accent);
+        }
+        
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent);
+            transition: width 0.3s ease;
+        }
+        
+        nav a:hover::after {
+            width: 100%;
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 195, 255, 0.1) 0%, transparent 70%);
+            z-index: -1;
+            transition: all 1s ease;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.2;
+            transition: all 0.5s ease;
+        }
+        
+        .hero p {
+            font-size: 1.25rem;
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            color: var(--text-secondary);
+            transition: all 0.5s ease;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            color: #003a4e;
+            padding: 0.85rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 0 0.5rem;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 195, 255, 0.3);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--accent);
+            color: var(--text);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline:hover {
+            background: rgba(0, 195, 255, 0.2);
+            box-shadow: 0 10px 20px rgba(0, 195, 255, 0.2);
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .section-subtitle {
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 5rem auto;
+            max-width: 1200px;
+        }
+        
+        .feature-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+            border: 1px solid rgba(0, 195, 255, 0.1);
+            text-align: center;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .commands {
+            margin: 6rem auto;
+            max-width: 1200px;
+        }
+        
+        .command-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem auto;
+            max-width: 1200px;
+        }
+        
+        .command-card {
+            background-color: var(--command-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            border-left: 4px solid var(--accent);
+            transition: transform 0.3s ease, background 0.3s ease;
+            text-align: left;
+        }
+        
+        .command-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .command-syntax {
+            font-family: 'Courier New', monospace;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 0.5rem;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+            color: var(--accent);
+            transition: all 0.3s ease;
+        }
+        
+        .command-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+        
+        .pricing {
+            margin: 6rem auto;
+            max-width: 1200px;
+        }
+        
+        .pricing-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .pricing-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(0, 195, 255, 0.1);
+            position: relative;
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 195, 255, 0.2);
+        }
+        
+        .pricing-card.popular {
+            border: 2px solid var(--accent);
+            transform: scale(1.03);
+        }
+        
+        .pricing-card.popular::before {
+            content: 'BEST VALUE';
+            position: absolute;
+            top: 15px;
+            right: -25px;
+            background-color: var(--accent);
+            color: #003a4e;
+            padding: 0.25rem 2rem;
+            font-size: 0.8rem;
+            font-weight: bold;
+            transform: rotate(45deg);
+            transition: all 0.3s ease;
+        }
+        
+        .pricing-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .price {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 1.5rem 0;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .price span {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            display: block;
+            margin-top: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .pricing-features {
+            list-style: none;
+            margin: 2rem 0;
+            text-align: center;
+        }
+        
+        .pricing-features li {
+            margin-bottom: 1rem;
+            position: relative;
+            padding-left: 1.5rem;
+            color: var(--text-secondary);
+            text-align: left;
+            transition: all 0.3s ease;
+        }
+        
+        .pricing-features li::before {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            transition: all 0.3s ease;
+        }
+        
+        .faq {
+            margin: 6rem auto;
+            max-width: 1200px;
+        }
+        
+        .faq-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin: 3rem auto;
+            max-width: 800px;
+        }
+        
+        .faq-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(0, 195, 255, 0.1);
+            text-align: left;
+        }
+        
+        .faq-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 195, 255, 0.1);
+        }
+        
+        .faq-card h3 {
+            margin-bottom: 1rem;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        footer {
+            background-color: rgba(0, 26, 34, 0.9);
+            padding: 3rem 0;
+            margin-top: 5rem;
+            border-top: 1px solid rgba(0, 195, 255, 0.1);
+            transition: all 0.5s ease;
+        }
+        
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: left;
+        }
+        
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-logo .logo-icon {
+            width: 30px;
+            height: 30px;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-about p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .social-links a {
+            color: var(--text-secondary);
+            font-size: 1.25rem;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            color: var(--accent);
+            transform: translateY(-3px);
+        }
+        
+        .footer-links h4 {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-links ul {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(0, 195, 255, 0.1);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+                transition: all 0.3s ease;
+            }
+            
+            nav ul {
+                gap: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
+                transition: all 0.3s ease;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .btn-group {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                align-items: center;
+            }
+            
+            .btn {
+                margin: 0.5rem 0;
+                width: 100%;
+                max-width: 250px;
+                justify-content: center;
+            }
+            
+            .pricing-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .pricing-card.popular {
+                transform: none;
+            }
+            
+            .pricing-card.popular::before {
+                right: -20px;
+                padding: 0.25rem 1.5rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+
+        /* Smooth scroll behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Fade-in animation for sections */
+        section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Snowflakes will be created by JavaScript -->
+    
+    <header>
+        <div class="header-container">
+            <a href="#" class="logo">
+                <img src="https://i.ibb.co/mC5KMndk/3dgifmaker61257.gif" alt="WIZSINT Logo" class="logo-icon">
+                <span>WIZSINT</span>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#commands">Commands</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                    <li><a href="https://discord.gg/wizsint" target="_blank">Support</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h1>The Ultimate OSINT Discord Bot</h1>
+                <p>WIZSINT brings powerful open-source intelligence tools directly to your Discord server. Investigate, analyze, and gather information with ease.</p>
+                <div class="btn-group">
+                    <a href="#pricing" class="btn">
+                        <i class="fas fa-bolt"></i> Get Started
+                    </a>
+                    <a href="https://discord.gg/wizsint" class="btn btn-outline" target="_blank">
+                        <i class="fab fa-discord"></i> Join WIZSINT
+                    </a>
+                </div>
+            </div>
+        </section>
+        
+        <section id="features" class="container">
+            <h2 class="section-title">Features</h2>
+            <p class="section-subtitle">WIZSINT provides a comprehensive suite of OSINT tools designed for Discord users</p>
+            
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>Advanced Lookup</h3>
+                    <p>Perform comprehensive searches across multiple platforms with a single command. Get detailed reports on usernames, emails, and phone numbers.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-fingerprint"></i>
+                    </div>
+                    <h3>Digital Footprint</h3>
+                    <p>Analyze and map digital footprints across social media platforms, forums, and other online services.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    <h3>Private API's</h3>
+                    <p>WIZSINT uses private API's and Public and Private Database's to source our information ensuring our users safety.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Advanced Lookup</h3>
+                    <p>Check to see if your own information is out there and take action.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3>Domain Intelligence</h3>
+                    <p>WHOIS lookups, DNS records, SSL certificate information, and website reputation checks.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3>Premium Features</h3>
+                    <p>Access to all premium commands and tools with a WIZSINT license key.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="commands" class="container commands">
+            <h2 class="section-title">Command's</h2>
+            <p class="section-subtitle">Access comprehensive intelligence gathering tools directly from Discord</p>
+            
+            <div class="command-grid">
+                <div class="command-card">
+                    <div class="command-syntax">/ip [ip]</div>
+                    <p class="command-desc">Perform a detailed lookup on any IP address including geolocation, ISP, and threat intelligence.</p>
+                </div>
+                
+                <div class="command-card">
+                    <div class="command-syntax">/d2ip [discord_id]</div>
+                    <p class="command-desc">Resolve a Discord user ID to potential IP addresses (where possible).</p>
+                </div>
+                
+                <div class="command-card">
+                    <div class="command-syntax">/doxbin [user]</div>
+                    <p class="command-desc">Search Doxbin archives for information on a target username.</p>
+                </div>
+                
+                <div class="command-card">
+                    <div class="command-syntax">/xbox [user]</div>
+                    <p class="command-desc">Convert Xbox gamertag to IP address and gather Xbox Live account details.</p>
+                </div>
+                
+                <div class="command-card">
+                    <div class="command-syntax">/github [user]</div>
+                    <p class="command-desc">Comprehensive GitHub user lookup including repositories, activity, and associations.</p>
+                </div>
+                
+                <div class="command-card">
+                    <div class="command-syntax">/court [name]</div>
+                    <p class="command-desc">Search public court records for criminal cases, lawsuits, and legal documents.</p>
+                </div>
+                
+                <div class="command-card">
+                    <div class="command-syntax">/vin [vin]</div>
+                    <p class="command-desc">Vehicle identification number lookup for detailed vehicle history reports.</p>
+                </div>
+                
+                <div class="command-card">
+                    <div class="command-syntax">/phone [number]</div>
+                    <p class="command-desc">Phone number intelligence including carrier, location, and potential owner.</p>
+                </div>
+                
+                <div class="command-card">
+                    <div class="command-syntax">/com [user]</div>
+                    <p class="command-desc">Community Insights - analyze a user's presence across multiple platforms.</p>
+                </div>
+                
+                <div class="command-card">
+                    <div class="command-syntax">/email [email]</div>
+                    <p class="command-desc">Check Gmail account information including creation date and associated services.</p>
+                </div>
+                
+                <div class="command-card">
+                    <div class="command-syntax">/flights [country]</div>
+                    <p class="command-desc">Real-time plane tracking for flights originating from specified country.</p>
+                </div>
+                
+                <div class="command-card">
+                    <div class="command-syntax">/redeem [license]</div>
+                    <p class="command-desc">Redeem your premium license key to unlock all WIZSINT features.</p>
+                </div>
+                
+                <div class="command-card">
+                    <div class="command-syntax">/breach [query]</div>
+                    <p class="command-desc">Search breach databases for compromised emails/usernames.</p>
+                </div>
+                
+                <div class="command-card">
+                    <div class="command-syntax">/d2r [user]</div>
+                    <p class="command-desc">Convert Discord account to associated Roblox profile.</p>
+                </div>
+                
+                <div class="command-card">
+                    <div class="command-syntax">/r2d [user]</div>
+                    <p class="command-desc">Convert Roblox account to associated Discord profile.</p>
+                </div>
+                
+                <div class="command-card">
+                    <div class="command-syntax">/roblox [user]</div>
+                    <p class="command-desc">In-depth Roblox account analysis including game history and transactions.</p>
+                </div>
+                
+                <div class="command-card">
+                    <div class="command-syntax">/usertrack [user]</div>
+                    <p class="command-desc">Cross-platform user tracking across multiple social networks.</p>
+                </div>
+                
+                <div class="command-card">
+                    <div class="command-syntax">/tiktok [user]</div>
+                    <p class="command-desc">TikTok username lookup for profile information and content analysis.</p>
+                </div>
+                
+                <div class="command-card">
+                    <div class="command-syntax">/plan</div>
+                    <p class="command-desc">View your current subscription plan and usage statistics.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="pricing" class="container pricing">
+            <h2 class="section-title">License Keys</h2>
+            <p class="section-subtitle">Choose the access period that fits your needs</p>
+            
+            <div class="pricing-cards">
+                <div class="pricing-card">
+                    <h3>3-Day Access</h3>
+                    <div class="price">$5<span>One-time payment</span></div>
+                    <ul class="pricing-features">
+                        <li>Full feature access</li>
+                        <li>Priority support</li>
+                        <li>All commands unlocked</li>
+                        <li>72-hour duration</li>
+                    </ul>
+                    <a href="https://discord.gg/wizsint" class="btn">Purchase</a>
+                </div>
+                
+                <div class="pricing-card">
+                    <h3>1-Week Access</h3>
+                    <div class="price">$8<span>One-time payment</span></div>
+                    <ul class="pricing-features">
+                        <li>Full feature access</li>
+                        <li>Priority support</li>
+                        <li>All commands unlocked</li>
+                        <li>7-day duration</li>
+                    </ul>
+                    <a href="https://discord.gg/wizsint" class="btn">Purchase</a>
+                </div>
+                
+                <div class="pricing-card popular">
+                    <h3>1-Month Access</h3>
+                    <div class="price">$20<span>One-time payment</span></div>
+                    <ul class="pricing-features">
+                        <li>Full feature access</li>
+                        <li>Priority support</li>
+                        <li>All commands unlocked</li>
+                        <li>30-day duration</li>
+                    </ul>
+                    <a href="https://discord.gg/wizsint" class="btn">Purchase</a>
+                </div>
+                
+                <div class="pricing-card">
+                    <h3>3-Month Access</h3>
+                    <div class="price">$35<span>One-time payment</span></div>
+                    <ul class="pricing-features">
+                        <li>Full feature access</li>
+                        <li>Priority support</li>
+                        <li>All commands unlocked</li>
+                        <li>90-day duration</li>
+                    </ul>
+                    <a href="https://discord.gg/wizsint" class="btn">Purchase</a>
+                </div>
+                
+                <div class="pricing-card">
+                    <h3>Lifetime Access</h3>
+                    <div class="price">$40<span>One-time payment</span></div>
+                    <ul class="pricing-features">
+                        <li>Full feature access</li>
+                        <li>Priority support</li>
+                        <li>All commands unlocked</li>
+                        <li>Permanent access</li>
+                    </ul>
+                    <a href="https://discord.gg/wizsint" class="btn">Purchase</a>
+                </div>
+            </div>
+        </section>
+        
+        <section id="faq" class="container faq">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <p class="section-subtitle">Find answers to common questions about WIZSINT</p>
+            
+            <div class="faq-grid">
+                <div class="faq-card">
+                    <h3>Is WIZSINT free to use?</h3>
+                    <p>WIZSINT is not free to use and you do need a license key in order to use WIZSINT but we do offer daily giveaways and deals in our server.</p>
+                </div>
+                
+                <div class="faq-card">
+                    <h3>How do I use WIZSINT?</h3>
+                    <p>After you purchase WIZSINT you need to add the bot to your discord account and then you are able to use commands privatly in the bot dms.</p>
+                </div>
+                
+                <div class="faq-card">
+                    <h3>Is my data secure with WIZSINT?</h3>
+                    <p>Absolutely. We don't store your search queries or results beyond what's necessary for temporary caching and rate limiting.</p>
+                </div>
+                
+                <div class="faq-card">
+                    <h3>How do license keys work?</h3>
+                    <p>After purchase, you'll receive a unique license key. Use the /redeem command in Discord to activate your premium features for the duration you purchased.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-about">
+                    <div class="footer-logo">
+                        <img src="https://i.ibb.co/mC5KMndk/3dgifmaker61257.gif" alt="WIZSINT Logo" class="logo-icon">
+                        <span>WIZSINT</span>
+                    </div>
+                    <p>The most powerful OSINT Discord bot for investigators, researchers, and cyber-security professionals.</p>
+                    <div class="social-links">
+                        <a href="https://discord.gg/wizsint" target="_blank"><i class="fab fa-discord"></i></a>
+                        <a href="https://github.com/crazylab281"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#commands">Commands</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                        <li><a href="#">Documentation</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>WIZSINT</h4>
+                    <ul>
+                        <li><a href="#">About</a></li>
+                        <li><a href="https://discord.gg/wizsint">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Acceptable Use</a></li>
+                        <li><a href="#">DMCA</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                &copy; 2025 WIZSINT. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Snowflake creation
+        function createSnowflakes() {
+            const snowflakes = ['❄', '❅', '❆', '✻', '✼', '✽', '✾', '✿', '❀', '❁'];
+            const body = document.body;
+            
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const snowflake = document.createElement('div');
+                    snowflake.className = 'snowflake';
+                    snowflake.innerHTML = snowflakes[Math.floor(Math.random() * snowflakes.length)];
+                    
+                    // Random position
+                    const startPositionX = Math.random() * window.innerWidth;
+                    
+                    // Random animation duration (5-15 seconds)
+                    const animationDuration = Math.random() * 10 + 5;
+                    
+                    // Random size
+                    const size = Math.random() * 20 + 10;
+                    
+                    // Random opacity
+                    const opacity = Math.random() * 0.7 + 0.3;
+                    
+                    // Random delay
+                    const delay = Math.random() * 5;
+                    
+                    // Apply styles
+                    snowflake.style.left = `${startPositionX}px`;
+                    snowflake.style.fontSize = `${size}px`;
+                    snowflake.style.opacity = opacity;
+                    snowflake.style.animationDuration = `${animationDuration}s`;
+                    snowflake.style.animationDelay = `${delay}s`;
+                    
+                    document.body.appendChild(snowflake);
+                    
+                    // Remove snowflake after it falls
+                    setTimeout(() => {
+                        snowflake.remove();
+                    }, animationDuration * 1000);
+                }, i * 300);
+            }
+        }
+        
+        // Create snowflakes initially and then every 15 seconds
+        createSnowflakes();
+        setInterval(createSnowflakes, 15000);
+        
+        // Intersection Observer for smooth section animations
+        const sections = document.querySelectorAll('section');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+        
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
